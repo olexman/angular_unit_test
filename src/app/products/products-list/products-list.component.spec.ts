@@ -92,6 +92,25 @@ describe("ProductsListComponent", () => {
     const listItem = fixture.debugElement.queryAll(By.css("li"));
     expect(listItem.length).toBe(0);
   });
+
+  it("Should show one list item when I have one product", () => {
+    /** assign to observable some needed value, detechChanges, count elements */
+    component.products = of([{ id: "abc", name: "item1", pictureId: "def" }]);
+    fixture.detectChanges();
+    const listItems = fixture.debugElement.queryAll(By.css("li"));
+    expect(listItems.length).toBe(1);
+  });
+
+  it("Should show one list item when I have 100 products", () => {
+    const products: Product[] = [];
+    for (let i = 0; i < 100; i++) {
+      products.push({ id: "abc", name: "item1", pictureId: "def" });
+    }
+    component.products = of(products);
+    fixture.detectChanges();
+    const listItems = fixture.debugElement.queryAll(By.css("li"));
+    expect(listItems.length).toBe(100);
+  });
 });
 
 class ProductServiceStub {
