@@ -1,5 +1,7 @@
+import { Location } from "@angular/common";
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
+import { RouterTestingModule } from "@angular/router/testing";
 import { Observable, of } from "rxjs";
 import { FileService } from "src/app/files/shared/file.service";
 import { Product } from "../shared/product.model";
@@ -14,8 +16,20 @@ describe("ProductsListComponent", () => {
     TestBed.configureTestingModule({
       declarations: [ProductsListComponent],
       providers: [
+        /** when testing services dont pass real services
+         *  instead pass stub (fake) service
+         */
         { provide: ProductService, useClass: ProductServiceStub },
         { provide: FileService, useClass: FileServiceStub },
+      ],
+      imports: [
+        /** check products-routing.module.ts
+         * when testing routing dont pass a real component
+         *  becaouse it requires some dependencies
+         */
+        RouterTestingModule.withRoutes([
+          { path: "add", component: DummyComponent },
+        ]),
       ],
     }).compileComponents();
   }));
@@ -49,6 +63,12 @@ describe("ProductsListComponent", () => {
     const firstButton: HTMLButtonElement = allbuttons[0].nativeElement;
     expect(firstButton.textContent).toBe("+");
   });
+
+  it("Should navigate to / before + button click", () => {
+    const location = TestBed.get(Location);
+    console.log({ location });
+    expect(location.path()).toBe("");
+  });
 });
 
 class ProductServiceStub {
@@ -58,3 +78,5 @@ class ProductServiceStub {
 }
 
 class FileServiceStub {}
+
+class DummyComponent {}
