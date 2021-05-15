@@ -82,6 +82,16 @@ describe("ProductsListComponent", () => {
       expect(location.path()).toBe("/add");
     });
   });
+
+  it("Should show one unordered list item", () => {
+    const unordereList = fixture.debugElement.queryAll(By.css("ul"));
+    expect(unordereList.length).toBe(1);
+  });
+
+  it("Should show no list item when no products are available", () => {
+    const listItem = fixture.debugElement.queryAll(By.css("li"));
+    expect(listItem.length).toBe(0);
+  });
 });
 
 class ProductServiceStub {
