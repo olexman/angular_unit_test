@@ -11,6 +11,7 @@ import { ProductsListComponent } from "./products-list.component";
 describe("ProductsListComponent", () => {
   let component: ProductsListComponent;
   let fixture: ComponentFixture<ProductsListComponent>;
+  let helper;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -37,6 +38,7 @@ describe("ProductsListComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProductsListComponent);
     component = fixture.componentInstance;
+    helper = new Helper();
     fixture.detectChanges();
   });
 
@@ -95,29 +97,21 @@ describe("ProductsListComponent", () => {
 
   it("Should show one list item when I have one product", () => {
     /** assign to observable some needed value, detechChanges, count elements */
-    component.products = of([{ id: "abc", name: "item1", pictureId: "def" }]);
+    component.products = helper.getProducts(1);
     fixture.detectChanges();
     const listItems = fixture.debugElement.queryAll(By.css("li"));
     expect(listItems.length).toBe(1);
   });
 
   it("Should show 100 list item when I have 100 products", () => {
-    const products: Product[] = [];
-    for (let i = 0; i < 100; i++) {
-      products.push({ id: "abc", name: "item1", pictureId: "def" });
-    }
-    component.products = of(products);
+    component.products = helper.getProducts(100);
     fixture.detectChanges();
     const listItems = fixture.debugElement.queryAll(By.css("li"));
     expect(listItems.length).toBe(100);
   });
 
   it("Should show 100 delete button, 1 x item", () => {
-    const products: Product[] = [];
-    for (let i = 0; i < 100; i++) {
-      products.push({ id: "abc", name: "item1", pictureId: "def" });
-    }
-    component.products = of(products);
+    component.products = helper.getProducts(100);
     fixture.detectChanges();
     let listItems = fixture.debugElement.queryAll(By.css("button"));
     listItems = listItems.slice(1, listItems.length); //remove add button
@@ -125,14 +119,15 @@ describe("ProductsListComponent", () => {
   });
 
   it("Should show 1 product name and id in span", () => {
-    const product = { id: "abc", name: "item1", pictureId: "def" };
-    component.products = of([product]);
+    component.products = helper.getProducts(1);
     fixture.detectChanges();
     const spanItems = fixture.debugElement.queryAll(By.css("span"));
     expect(spanItems.length).toBe(1);
     const span = spanItems[0];
     const spanElement: HTMLSpanElement = span.nativeElement;
-    expect(spanElement.textContent).toBe(product.name + " -- " + product.id);
+    expect(spanElement.textContent).toBe(
+      helper.products[0].name + " -- " + helper.products[0].id
+    );
   });
 });
 
@@ -145,3 +140,18 @@ class ProductServiceStub {
 class FileServiceStub {}
 
 class DummyComponent {}
+
+class Helper {
+  products: Product[] = [];
+
+  getProducts(amount: number): Observable<Product[]> {
+    for (let i = 0; i < amount; i++) {
+      this.products.push({
+        id: "abc" + i,
+        name: "item1" + i,
+        pictureId: "def" + i,
+      });
+    }
+    return of(this.products);
+  }
+}
