@@ -34,7 +34,7 @@ describe("ProductsListComponent", () => {
   it("should contain an h2 tag", () => {
     /** query takes first element of type h2 */
     const h2Element = fixture.debugElement.query(By.css("h2"));
-    expect(h2Element.nativeElement.textContent).toBe("List all Product");
+    expect(h2Element.nativeElement.textContent).toBe("List all Products");
   });
 
   it("should minimum be one button on the page", () => {
