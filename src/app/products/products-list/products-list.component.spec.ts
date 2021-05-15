@@ -69,6 +69,19 @@ describe("ProductsListComponent", () => {
     console.log({ location });
     expect(location.path()).toBe("");
   });
+
+  it("Should navigate to /add after + button click", () => {
+    const location = TestBed.get(Location);
+    const buttons = fixture.debugElement.queryAll(By.css("button"));
+    const nativeButton: HTMLButtonElement = buttons[0].nativeElement;
+    /** when we click, we have to ask Angular to detect the changes (rerender)*/
+    nativeButton.click();
+    fixture.detectChanges();
+    /** when changes are done, then we expect path to be '/add' */
+    fixture.whenStable().then(() => {
+      expect(location.path()).toBe("/add");
+    });
+  });
 });
 
 class ProductServiceStub {
