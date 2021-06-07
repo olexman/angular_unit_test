@@ -14,16 +14,37 @@ describe("ProductsListComponent", () => {
   let fixture: ComponentFixture<ProductsListComponent>;
   let helper;
   let dh: DOMHelper<ProductsListComponent>;
-
+  let productServiceMock: any;
+  let fileServiceMock: any; 
   beforeEach(async(() => {
+    /** description params of jasmine spy object (sobstitute of stub service):
+     * 
+     * 1. declare what should the spy object actualy be / what class should it rappresent 
+     * 
+     * 2. what methods should this ProductService override and listen for
+     * 
+     */
+    productServiceMock = jasmine.createSpyObj('ProductService', ['getProducts']);
+    fileServiceMock = jasmine.createSpyObj('FileService', ['getFileUrl']);
+
+
+    /** when we have to declare what a specific function should return, we write
+     * 
+     * serviceNameMock . function name declared inside createSpyObj .and.returnValue(someReturningValue)
+     * 
+     */
+    productServiceMock.getProducts.and.returnValue(of([]));
+    fileServiceMock.getFileUrl.and.returnValue('');
+
+
     TestBed.configureTestingModule({
       declarations: [ProductsListComponent],
       providers: [
         /** when testing services dont pass real services
          *  instead pass stub (fake) service
          */
-        { provide: ProductService, useClass: ProductServiceStub },
-        { provide: FileService, useClass: FileServiceStub },
+        { provide: ProductService, useValue: productServiceMock },
+        { provide: FileService, useValue: fileServiceMock },
       ],
       imports: [
         /** check products-routing.module.ts
@@ -127,14 +148,6 @@ describe("ProductsListComponent", () => {
     }
   });
 });
-
-class ProductServiceStub {
-  getProducts(): Observable<Product[]> {
-    return of([]);
-  }
-}
-
-class FileServiceStub {}
 
 class DummyComponent {}
 
