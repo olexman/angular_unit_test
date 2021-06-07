@@ -4,6 +4,7 @@ import { By } from "@angular/platform-browser";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Observable, of } from "rxjs";
 import { FileService } from "src/app/files/shared/file.service";
+import { DOMHelper } from "src/testing/dom-helper";
 import { Product } from "../shared/product.model";
 import { ProductService } from "../shared/product.service";
 import { ProductsListComponent } from "./products-list.component";
@@ -12,7 +13,7 @@ describe("ProductsListComponent", () => {
   let component: ProductsListComponent;
   let fixture: ComponentFixture<ProductsListComponent>;
   let helper;
-  let dh: DOMHelper;
+  let dh: DOMHelper<ProductsListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -149,32 +150,5 @@ class Helper {
       });
     }
     return of(this.products);
-  }
-}
-
-class DOMHelper {
-  private fixture: ComponentFixture<ProductsListComponent>;
-  constructor(fixture: ComponentFixture<ProductsListComponent>){
-    this.fixture = fixture;
-  }
-
-  /** get text */
-  singleText(tagName: string): string {
-    /** query takes first element of tagName */
-    const h2Element = this.fixture.debugElement.query(By.css(tagName));
-    if (h2Element) {
-      return h2Element.nativeElement.textContent;
-    }
-  }
-
-  count(tagName: string): number {
-    /** query takes first element of tagName */
-    const elements = this.fixture.debugElement.queryAll(By.css(tagName));
-    return elements.length;
-  }
-
-  countText(tagName: string, text: string):number {
-    const elements = this.fixture.debugElement.queryAll(By.css(tagName));
-    return elements.filter(el => el.nativeElement.textContent === text).length;
   }
 }
