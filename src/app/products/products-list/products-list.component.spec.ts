@@ -1,6 +1,7 @@
 import { Location } from "@angular/common";
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
+import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Observable, of } from "rxjs";
 import { FileService } from "src/app/files/shared/file.service";
@@ -51,9 +52,10 @@ describe("ProductsListComponent", () => {
          * when testing routing dont pass a real component
          *  becaouse it requires some dependencies
          */
-        RouterTestingModule.withRoutes([
-          { path: "add", component: DummyComponent },
-        ]),
+        RouterTestingModule
+        // .withRoutes([
+        //   { path: "add", component: DummyComponent },
+        // ]),
       ],
     }).compileComponents();
   }));
@@ -99,16 +101,22 @@ describe("ProductsListComponent", () => {
   });
 
   it("Should navigate to /add after + button click", () => {
-    const location = TestBed.get(Location);
-    const buttons = fixture.debugElement.queryAll(By.css("button"));
-    const nativeButton: HTMLButtonElement = buttons[0].nativeElement;
+    const router = TestBed.get(Router);
+    /** navigateByUrl and createUrlTree are methods of Router class */
+    spyOn(router, 'navigateByUrl');
+    dh.clickButton('+');
+    // const buttons = fixture.debugElement.queryAll(By.css("button"));
+    // const nativeButton: HTMLButtonElement = buttons[0].nativeElement;
     /** when we click, we have to ask Angular to detect the changes (rerender)*/
-    nativeButton.click();
-    fixture.detectChanges();
+    // nativeButton.click();
+    // fixture.detectChanges();
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree(['/add']),
+    {skipLocationChange: false, replaceUrl: false});
     /** when changes are done, then we expect path to be '/add' */
-    fixture.whenStable().then(() => {
-      expect(location.path()).toBe("/add");
-    });
+    // fixture.whenStable().then(() => {
+    //   expect(location.path()).toBe("/add");
+    // });
   });
 
   it("Should show one unordered list item", () => {
@@ -148,8 +156,6 @@ describe("ProductsListComponent", () => {
     }
   });
 });
-
-class DummyComponent {}
 
 class Helper {
   products: Product[] = [];
