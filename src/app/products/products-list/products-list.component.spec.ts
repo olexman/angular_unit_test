@@ -50,20 +50,24 @@ describe("ProductsListComponent", () => {
 
   /** test by tag */
   it("should contain an h2 tag", () => {
+    /** query takes first element of type h2*/
+    /** expression to be List all Products */
     expect(dh.singleText('h2')).toBe("List all Products");
   });
 
   it("should minimum be one button on the page", () => {
     /** query takes all element of type button*/
-    const buttons = fixture.debugElement.queryAll(By.css("button"));
     /** expression to be TRUE */
-    expect(buttons.length >= 1).toBeTruthy();
+    // expect(dh.count('button') >= 1).toBeTruthy();
+    expect(dh.count('button')).toBeGreaterThanOrEqual(1);
+
   });
 
   it("Should be a + button first on the page", () => {
-    const allbuttons = fixture.debugElement.queryAll(By.css("button"));
-    const firstButton: HTMLButtonElement = allbuttons[0].nativeElement;
-    expect(firstButton.textContent).toBe("+");
+    // const allbuttons = fixture.debugElement.queryAll(By.css("button"));
+    // const firstButton: HTMLButtonElement = allbuttons[0].nativeElement;
+    // expect(firstButton.textContent).toBe("+");
+    expect(dh.singleText('button')).toBe("+");
   });
 
   it("Should navigate to / before + button click", () => {
@@ -86,28 +90,24 @@ describe("ProductsListComponent", () => {
   });
 
   it("Should show one unordered list item", () => {
-    const unordereList = fixture.debugElement.queryAll(By.css("ul"));
-    expect(unordereList.length).toBe(1);
+    expect(dh.count('ul')).toEqual(1);
   });
 
   it("Should show no list item when no products are available", () => {
-    const listItem = fixture.debugElement.queryAll(By.css("li"));
-    expect(listItem.length).toBe(0);
+    expect(dh.count('li')).toEqual(0);
   });
 
   it("Should show one list item when I have one product", () => {
     /** assign to observable some needed value, detechChanges, count elements */
     component.products = helper.getProducts(1);
     fixture.detectChanges();
-    const listItems = fixture.debugElement.queryAll(By.css("li"));
-    expect(listItems.length).toBe(1);
+    expect(dh.count('li')).toEqual(1);
   });
 
   it("Should show 100 list item when I have 100 products", () => {
     component.products = helper.getProducts(100);
     fixture.detectChanges();
-    const listItems = fixture.debugElement.queryAll(By.css("li"));
-    expect(listItems.length).toBe(100);
+    expect(dh.count('li')).toEqual(100);
   });
 
   it("Should show 100 delete button, 1 x item", () => {
@@ -164,10 +164,16 @@ class DOMHelper {
 
   /** get text */
   singleText(tagName: string): string {
-      /** query takes first element of tagName */
-     const h2Element = this.fixture.debugElement.query(By.css(tagName));
-     if (h2Element) {
-       return h2Element.nativeElement.textContent;
-     }
+    /** query takes first element of tagName */
+    const h2Element = this.fixture.debugElement.query(By.css(tagName));
+    if (h2Element) {
+      return h2Element.nativeElement.textContent;
+    }
+  }
+
+  count(tagName: string): number {
+    /** query takes first element of tagName */
+    const elements = this.fixture.debugElement.queryAll(By.css(tagName));
+    return elements.length;
   }
 }
