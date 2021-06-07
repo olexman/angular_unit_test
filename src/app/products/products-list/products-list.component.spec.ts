@@ -12,6 +12,7 @@ describe("ProductsListComponent", () => {
   let component: ProductsListComponent;
   let fixture: ComponentFixture<ProductsListComponent>;
   let helper;
+  let dh: DOMHelper;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -39,6 +40,7 @@ describe("ProductsListComponent", () => {
     fixture = TestBed.createComponent(ProductsListComponent);
     component = fixture.componentInstance;
     helper = new Helper();
+    dh = new DOMHelper(fixture);
     fixture.detectChanges();
   });
 
@@ -48,9 +50,7 @@ describe("ProductsListComponent", () => {
 
   /** test by tag */
   it("should contain an h2 tag", () => {
-    /** query takes first element of type h2 */
-    const h2Element = fixture.debugElement.query(By.css("h2"));
-    expect(h2Element.nativeElement.textContent).toBe("List all Products");
+    expect(dh.singleText('h2')).toBe("List all Products");
   });
 
   it("should minimum be one button on the page", () => {
@@ -153,5 +153,21 @@ class Helper {
       });
     }
     return of(this.products);
+  }
+}
+
+class DOMHelper {
+  private fixture: ComponentFixture<ProductsListComponent>;
+  constructor(fixture: ComponentFixture<ProductsListComponent>){
+    this.fixture = fixture;
+  }
+
+  /** get text */
+  singleText(tagName: string): string {
+      /** query takes first element of tagName */
+     const h2Element = this.fixture.debugElement.query(By.css(tagName));
+     if (h2Element) {
+       return h2Element.nativeElement.textContent;
+     }
   }
 }
