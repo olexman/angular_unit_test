@@ -113,21 +113,17 @@ describe("ProductsListComponent", () => {
   it("Should show 100 delete button, 1 x item", () => {
     component.products = helper.getProducts(100);
     fixture.detectChanges();
-    let listItems = fixture.debugElement.queryAll(By.css("button"));
-    listItems = listItems.slice(1, listItems.length); //remove add button
-    expect(listItems.length).toBe(100);
+    expect(dh.countText('button', 'Delete')).toEqual(100);
+
   });
 
-  it("Should show 1 product name and id in span", () => {
-    component.products = helper.getProducts(1);
+  it("Should show 5 product name and id in span", () => {
+    component.products = helper.getProducts(5);
     fixture.detectChanges();
-    const spanItems = fixture.debugElement.queryAll(By.css("span"));
-    expect(spanItems.length).toBe(1);
-    const span = spanItems[0];
-    const spanElement: HTMLSpanElement = span.nativeElement;
-    expect(spanElement.textContent).toBe(
-      helper.products[0].name + " -- " + helper.products[0].id
-    );
+    for (let i = 0; i < 5; i++) {
+      const product = helper.products[i];
+      expect(dh.countText('span', product.name + ' -- ' + product.id)).toBe(1)
+    }
   });
 });
 
@@ -148,8 +144,8 @@ class Helper {
     for (let i = 0; i < amount; i++) {
       this.products.push({
         id: "abc" + i,
-        name: "item1" + i,
-        pictureId: "def" + i,
+        name: "item" + i,
+        pictureId: "def",
       });
     }
     return of(this.products);
@@ -175,5 +171,10 @@ class DOMHelper {
     /** query takes first element of tagName */
     const elements = this.fixture.debugElement.queryAll(By.css(tagName));
     return elements.length;
+  }
+
+  countText(tagName: string, text: string):number {
+    const elements = this.fixture.debugElement.queryAll(By.css(tagName));
+    return elements.filter(el => el.nativeElement.textContent === text).length;
   }
 }
