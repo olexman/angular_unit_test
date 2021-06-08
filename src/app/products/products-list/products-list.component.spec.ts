@@ -139,6 +139,12 @@ describe("ProductsListComponent", () => {
   });
 
   describe("Delete product", () => {
+
+    let helper: Helper;
+    beforeEach(() => {
+      helper = new Helper();
+    })
+
     it("Should call deleteProduct once when we click Delete", () => {
       component.products = helper.getProducts(1);
       fixture.detectChanges();
@@ -168,14 +174,20 @@ describe("ProductsListComponent", () => {
   });
 
   describe("Navigation", () => {
+
+    let location: Location;
+    let router: Router;
+    beforeEach(() => {
+      location = TestBed.get(Location);
+      router = TestBed.get(Router);
+    })
+
+
     it("Should navigate to / before + button click", () => {
-      const location = TestBed.get(Location);
-      console.log({ location });
       expect(location.path()).toBe("");
     });
   
     it("Should navigate to /add after + button click", () => {
-      const router = TestBed.get(Router);
       /** navigateByUrl and createUrlTree are methods of Router class */
       spyOn(router, 'navigateByUrl');
       dh.clickButton('+');
