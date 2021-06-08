@@ -136,6 +136,19 @@ describe("ProductsListComponent", () => {
         expect(dh.countText('span', product.name + ' -- ' + product.id)).toBe(1)
       }
     });
+
+    // it("Should show img tag with a url on a Product", () => {
+    //   component.products = new helper.getProducts(1);
+    //   helper.products[0].url = "http://a-url";
+    //   fixture.detectChanges();
+    //   expect(dh.count('img')).toBe(1);
+    // })
+
+    it('Should call getProducts on the ProductService one time on ngOnInit', () => {
+      component.ngOnInit();
+      expect(productServiceMock.getProducts).toHaveBeenCalledTimes(2);
+
+    })
   });
 
   describe("Delete product", () => {
@@ -205,6 +218,22 @@ describe("ProductsListComponent", () => {
       // });
     });
   });
+
+
+  describe("Async calls", () => {
+    let helper: Helper;
+    beforeEach(() => {
+      helper = new Helper();
+      fixture.detectChanges();
+    });
+
+    it('Should call getProducts on the ProductService one time on ngOnInit', () => {
+      component.ngOnInit();
+      expect(productServiceMock.getProducts).toHaveBeenCalledTimes(2);
+    });
+  
+  });
+
 });
 
 class Helper {
