@@ -155,6 +155,33 @@ describe("ProductsListComponent", () => {
       expect(dh.countText('span', product.name + ' -- ' + product.id)).toBe(1)
     }
   });
+
+  it("Should call deleteProduct once when we click Delete", () => {
+    component.products = helper.getProducts(1);
+    fixture.detectChanges();
+    spyOn(component, 'deleteProduct');
+    dh.clickButton('Delete');
+    /**
+    * toHaveBeenCalledTimes(1) - 1 corresponds to hove many times was repeated dh.clickButton('Delete');
+    */
+    expect(component.deleteProduct).toHaveBeenCalledTimes(1);
+
+  });
+
+  it("Should call deleteProduct with product to delete when we click Delete", () => {
+    component.products = helper.getProducts(1);
+    fixture.detectChanges();
+    /** component, real function from component */
+    spyOn(component, 'deleteProduct');
+    dh.clickButton('Delete');
+    
+    /** 
+     * component.functionFromRealComponent
+     * 1.toHaveBeenCalledWith(function parameter) i.e add(10)
+     * 
+     * */
+    expect(component.deleteProduct).toHaveBeenCalledWith(helper.products[0]);
+  })
 });
 
 class Helper {
