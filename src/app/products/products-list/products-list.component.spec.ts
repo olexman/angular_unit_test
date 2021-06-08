@@ -68,120 +68,131 @@ describe("ProductsListComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+
+  describe('Simple HTML', () => {
+    it("should create", () => {
+      expect(component).toBeTruthy();
+    });
+  
+    /** test by tag */
+    it("should contain an h2 tag", () => {
+      /** query takes first element of type h2*/
+      /** expression to be List all Products */
+      expect(dh.singleText('h2')).toBe("List all Products");
+    });
+  
+    it("should minimum be one button on the page", () => {
+      /** query takes all element of type button*/
+      /** expression to be TRUE */
+      // expect(dh.count('button') >= 1).toBeTruthy();
+      expect(dh.count('button')).toBeGreaterThanOrEqual(1);
+  
+    });
+  
+    it("Should be a + button first on the page", () => {
+      // const allbuttons = fixture.debugElement.queryAll(By.css("button"));
+      // const firstButton: HTMLButtonElement = allbuttons[0].nativeElement;
+      // expect(firstButton.textContent).toBe("+");
+      expect(dh.singleText('button')).toBe("+");
+    });
+  });
+  
+
+  describe("List products", () => {
+
+    it("Should show one unordered list item", () => {
+      expect(dh.count('ul')).toEqual(1);
+    });
+  
+    it("Should show no list item when no products are available", () => {
+      expect(dh.count('li')).toEqual(0);
+    });
+  
+    it("Should show one list item when I have one product", () => {
+      /** assign to observable some needed value, detechChanges, count elements */
+      component.products = helper.getProducts(1);
+      fixture.detectChanges();
+      expect(dh.count('li')).toEqual(1);
+    });
+  
+    it("Should show 100 list item when I have 100 products", () => {
+      component.products = helper.getProducts(100);
+      fixture.detectChanges();
+      expect(dh.count('li')).toEqual(100);
+    });
+  
+    it("Should show 100 delete button, 1 x item", () => {
+      component.products = helper.getProducts(100);
+      fixture.detectChanges();
+      expect(dh.countText('button', 'Delete')).toEqual(100);
+  
+    });
+  
+    it("Should show 5 product name and id in span", () => {
+      component.products = helper.getProducts(5);
+      fixture.detectChanges();
+      for (let i = 0; i < 5; i++) {
+        const product = helper.products[i];
+        expect(dh.countText('span', product.name + ' -- ' + product.id)).toBe(1)
+      }
+    });
   });
 
-  /** test by tag */
-  it("should contain an h2 tag", () => {
-    /** query takes first element of type h2*/
-    /** expression to be List all Products */
-    expect(dh.singleText('h2')).toBe("List all Products");
+  describe("Delete product", () => {
+    it("Should call deleteProduct once when we click Delete", () => {
+      component.products = helper.getProducts(1);
+      fixture.detectChanges();
+      spyOn(component, 'deleteProduct');
+      dh.clickButton('Delete');
+      /**
+      * toHaveBeenCalledTimes(1) - 1 corresponds to hove many times was repeated dh.clickButton('Delete');
+      */
+      expect(component.deleteProduct).toHaveBeenCalledTimes(1);
+  
+    });
+  
+    it("Should call deleteProduct with product to delete when we click Delete", () => {
+      component.products = helper.getProducts(1);
+      fixture.detectChanges();
+      /** component, real function from component */
+      spyOn(component, 'deleteProduct');
+      dh.clickButton('Delete');
+      
+      /** 
+       * component.functionFromRealComponent
+       * 1.toHaveBeenCalledWith(function parameter) i.e add(10)
+       * 
+       * */
+      expect(component.deleteProduct).toHaveBeenCalledWith(helper.products[0]);
+    });
   });
 
-  it("should minimum be one button on the page", () => {
-    /** query takes all element of type button*/
-    /** expression to be TRUE */
-    // expect(dh.count('button') >= 1).toBeTruthy();
-    expect(dh.count('button')).toBeGreaterThanOrEqual(1);
-
+  describe("Navigation", () => {
+    it("Should navigate to / before + button click", () => {
+      const location = TestBed.get(Location);
+      console.log({ location });
+      expect(location.path()).toBe("");
+    });
+  
+    it("Should navigate to /add after + button click", () => {
+      const router = TestBed.get(Router);
+      /** navigateByUrl and createUrlTree are methods of Router class */
+      spyOn(router, 'navigateByUrl');
+      dh.clickButton('+');
+      // const buttons = fixture.debugElement.queryAll(By.css("button"));
+      // const nativeButton: HTMLButtonElement = buttons[0].nativeElement;
+      /** when we click, we have to ask Angular to detect the changes (rerender)*/
+      // nativeButton.click();
+      // fixture.detectChanges();
+  
+      expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree(['/add']),
+      {skipLocationChange: false, replaceUrl: false});
+      /** when changes are done, then we expect path to be '/add' */
+      // fixture.whenStable().then(() => {
+      //   expect(location.path()).toBe("/add");
+      // });
+    });
   });
-
-  it("Should be a + button first on the page", () => {
-    // const allbuttons = fixture.debugElement.queryAll(By.css("button"));
-    // const firstButton: HTMLButtonElement = allbuttons[0].nativeElement;
-    // expect(firstButton.textContent).toBe("+");
-    expect(dh.singleText('button')).toBe("+");
-  });
-
-  it("Should navigate to / before + button click", () => {
-    const location = TestBed.get(Location);
-    console.log({ location });
-    expect(location.path()).toBe("");
-  });
-
-  it("Should navigate to /add after + button click", () => {
-    const router = TestBed.get(Router);
-    /** navigateByUrl and createUrlTree are methods of Router class */
-    spyOn(router, 'navigateByUrl');
-    dh.clickButton('+');
-    // const buttons = fixture.debugElement.queryAll(By.css("button"));
-    // const nativeButton: HTMLButtonElement = buttons[0].nativeElement;
-    /** when we click, we have to ask Angular to detect the changes (rerender)*/
-    // nativeButton.click();
-    // fixture.detectChanges();
-
-    expect(router.navigateByUrl).toHaveBeenCalledWith(router.createUrlTree(['/add']),
-    {skipLocationChange: false, replaceUrl: false});
-    /** when changes are done, then we expect path to be '/add' */
-    // fixture.whenStable().then(() => {
-    //   expect(location.path()).toBe("/add");
-    // });
-  });
-
-  it("Should show one unordered list item", () => {
-    expect(dh.count('ul')).toEqual(1);
-  });
-
-  it("Should show no list item when no products are available", () => {
-    expect(dh.count('li')).toEqual(0);
-  });
-
-  it("Should show one list item when I have one product", () => {
-    /** assign to observable some needed value, detechChanges, count elements */
-    component.products = helper.getProducts(1);
-    fixture.detectChanges();
-    expect(dh.count('li')).toEqual(1);
-  });
-
-  it("Should show 100 list item when I have 100 products", () => {
-    component.products = helper.getProducts(100);
-    fixture.detectChanges();
-    expect(dh.count('li')).toEqual(100);
-  });
-
-  it("Should show 100 delete button, 1 x item", () => {
-    component.products = helper.getProducts(100);
-    fixture.detectChanges();
-    expect(dh.countText('button', 'Delete')).toEqual(100);
-
-  });
-
-  it("Should show 5 product name and id in span", () => {
-    component.products = helper.getProducts(5);
-    fixture.detectChanges();
-    for (let i = 0; i < 5; i++) {
-      const product = helper.products[i];
-      expect(dh.countText('span', product.name + ' -- ' + product.id)).toBe(1)
-    }
-  });
-
-  it("Should call deleteProduct once when we click Delete", () => {
-    component.products = helper.getProducts(1);
-    fixture.detectChanges();
-    spyOn(component, 'deleteProduct');
-    dh.clickButton('Delete');
-    /**
-    * toHaveBeenCalledTimes(1) - 1 corresponds to hove many times was repeated dh.clickButton('Delete');
-    */
-    expect(component.deleteProduct).toHaveBeenCalledTimes(1);
-
-  });
-
-  it("Should call deleteProduct with product to delete when we click Delete", () => {
-    component.products = helper.getProducts(1);
-    fixture.detectChanges();
-    /** component, real function from component */
-    spyOn(component, 'deleteProduct');
-    dh.clickButton('Delete');
-    
-    /** 
-     * component.functionFromRealComponent
-     * 1.toHaveBeenCalledWith(function parameter) i.e add(10)
-     * 
-     * */
-    expect(component.deleteProduct).toHaveBeenCalledWith(helper.products[0]);
-  })
 });
 
 class Helper {
