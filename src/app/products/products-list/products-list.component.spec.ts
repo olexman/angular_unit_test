@@ -231,6 +231,13 @@ describe("ProductsListComponent", () => {
       component.ngOnInit();
       expect(productServiceMock.getProducts).toHaveBeenCalledTimes(2);
     });
+
+    // it("Should return img tag when product with url is loaded async from ProductService", () => {
+    //   productServiceMock.getProducts.and.returnValue(helper.getProducts(1));
+    //   fileServiceMock.getFileUrl.and.returnValue(of('http://url.com'));
+    //   fixture.detectChanges();
+    //   expect(dh.count('img')).toBe(1);
+    // })
   
   });
 
