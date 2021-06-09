@@ -10,13 +10,13 @@ describe('ProductService', () => {
     let fileServiceMock: any;
     let httpMock: HttpTestingController;
     let service: ProductService;
-    let fsCollection: any;
+    let fsCollectionMock: any;
 
   beforeEach(() => {
     angularFirestoreMock = jasmine.createSpyObj('AngularFirestore', ['collection']);
-    fsCollection = jasmine.createSpyObj('collection', ['snapshotChanges']);
-    angularFirestoreMock.collection.and.returnValue(fsCollection);
-    fsCollection.snapShotCollection.and.returnValue(of([])); 
+    fsCollectionMock = jasmine.createSpyObj('collection', ['snapshotChanges', 'valueChanges']);
+    angularFirestoreMock.collection.and.returnValue(fsCollectionMock);
+    fsCollectionMock.snapshotChanges.and.returnValue(of([])); 
     fileServiceMock = jasmine.createSpyObj('FileService', ['getFileUrl', 'upload']);
     
     TestBed.configureTestingModule({
@@ -38,10 +38,21 @@ describe('ProductService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe("get products", () => {
-    it('should call collection and snapshotChange on AngularFirestore', () => {
+  describe("getProducts", () => {
+
+    beforeEach(() => {
         service.getProducts();
+    })
+    it('should call collection 1 time on AngularFirestore service', () => {
         expect(angularFirestoreMock.collection).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call collection with "products" as param', () => {
+        expect(angularFirestoreMock.collection).toHaveBeenCalledWith('products');
+    });
+
+      it('should call snapshotChanges 1 time on AngularFirestore service', () => {
+        expect(fsCollectionMock.snapshotChanges).toHaveBeenCalledTimes(1);
       });
   })
 
